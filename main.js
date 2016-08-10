@@ -6,10 +6,21 @@ http.createServer(function (request, response){
   response.end('Hello World\n');
 }).listen(8081,"0.0.0.0");
 
-console.log("Server running");
 
-var data = fs.readFile('input.txt', function (err,data){
-  if (err) return console.error(err);
-  console.log(data.toString());
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+
+var connectHandler = function connected() {
+  console.log('connection succesful');
+
+  eventEmitter.emit('data_received');
+}
+eventEmitter.on('connection', connectHandler);
+
+eventEmitter.on('data_received', function(){
+  console.log('data received succesfully');
 });
+
+eventEmitter.emit('connection');
+
 console.log("Program Ended");
